@@ -18,15 +18,13 @@ class M170803075642Create_group_topic_table extends Migration
             'id' => $this->primaryKey()->comment('主键'),
             'group_id' => $this->integer()->comment('群组ID'),
             'user_id' => $this->integer()->comment('用户ID'),
-            'payment_id' => $this->string(50)->comment('支付ID'),
-            'fee' => $this->decimal(10, 2)->defaultValue(0.00)->comment('手续费'),
-            'service_charge' => $this->decimal(10, 2)->defaultValue(0.00)->comment('服务费'),
+            'model_id' => $this->integer()->notNull()->comment('资源模型ID'),
+            'model' => $this->string()->notNull()->comment('资源模型名称'),
+            'subject' => $this->string()->comment('资源名称'),
             'status' => $this->smallInteger(1)->defaultValue(0)->comment('状态'),
             'created_at' => $this->integer()->notNull()->defaultValue(0)->comment('创建时间'),
             'updated_at' => $this->integer()->notNull()->defaultValue(0)->comment('更新时间'),
         ], $tableOptions);
-
-        $this->createIndex('{{%group_topic_un}}', '{{%group_topic}}', ['group_id', 'user_id'], true);
         $this->addForeignKey('{{%group_topic_fk}}', '{{%group_topic}}', 'group_id', '{{%group}}', 'id', 'CASCADE', 'CASCADE');
         $this->addForeignKey('{{%group_topic_fk1}}', '{{%group_topic}}', 'user_id', '{{%user}}', 'id', 'CASCADE', 'CASCADE');
 
