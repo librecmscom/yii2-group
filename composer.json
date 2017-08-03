@@ -1,0 +1,21 @@
+{
+  "name": "yuncms/yii2-group",
+  "description": "The group extension for the yuncms",
+  "keywords": [
+    "yuncms",
+    "group"
+  ],
+  "type": "yii2-extension",
+  "license": "MIT",
+  "require": {
+    "yiisoft/yii2": "~2.0.6",
+    "xutl/yii2-fileupload-widget": "~1.0",
+    "xutl/yii2-share-widget": "~1.0",
+    "yuncms/yii2-user": "~2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "yuncms\\group\\": ""
+    }
+  }
+}
