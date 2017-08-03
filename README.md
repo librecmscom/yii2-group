@@ -2,7 +2,7 @@
 适用于Yii2的群组模块
 
 [![Latest Stable Version](https://poser.pugx.org/yuncms/yii2-group/v/stable.png)](https://packagist.org/packages/yuncms/yii2-group)
-[![Total Downloads](https://poser.pugx.org/yuncms/yii2-article/downloads.png)](https://packagist.org/packages/yuncms/yii2-group)
+[![Total Downloads](https://poser.pugx.org/yuncms/yii2-group/downloads.png)](https://packagist.org/packages/yuncms/yii2-group)
 [![Reference Status](https://www.versioneye.com/php/yuncms:yii2-group/reference_badge.svg)](https://www.versioneye.com/php/yuncms:yii2-group/references)
 [![Build Status](https://img.shields.io/travis/yiisoft/yii2-group.svg)](http://travis-ci.org/yuncms/yii2-group)
 [![Dependency Status](https://www.versioneye.com/php/yuncms:yii2-group/dev-master/badge.png)](https://www.versioneye.com/php/yuncms:yii2-group/dev-master)
