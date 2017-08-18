@@ -19,7 +19,6 @@ class M170803074108Create_group_fans_table extends Migration
             'user_id' => $this->integer()->comment('用户ID'),
             'payment_id' => $this->string(50)->comment('支付ID'),
             'fee' => $this->decimal(10, 2)->defaultValue(0.00)->comment('手续费'),
-            'service_charge' => $this->decimal(10, 2)->defaultValue(0.00)->comment('服务费'),
             'status' => $this->smallInteger(1)->defaultValue(0)->comment('状态'),
             'created_at' => $this->integer()->notNull()->defaultValue(0)->comment('创建时间'),
             'updated_at' => $this->integer()->notNull()->defaultValue(0)->comment('更新时间'),

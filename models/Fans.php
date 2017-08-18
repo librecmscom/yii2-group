@@ -50,7 +50,7 @@ class Fans extends ActiveRecord
     {
         return [
             [['group_id', 'user_id', 'status'], 'integer'],
-            [['fee', 'service_charge'], 'number'],
+            [['fee'], 'number'],
             [['payment_id'], 'string', 'max' => 50],
             [['group_id', 'user_id'], 'unique', 'targetAttribute' => ['group_id', 'user_id']],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::className(), 'targetAttribute' => ['group_id' => 'id']],
@@ -64,14 +64,13 @@ class Fans extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'group_id' => Yii::t('group', '群组ID'),
-            'user_id' => Yii::t('group', '用户ID'),
-            'payment_id' => Yii::t('group', '支付ID'),
-            'fee' => Yii::t('group', '手续费'),
-            'service_charge' => Yii::t('group', '服务费'),
-            'status' => Yii::t('group', '状态'),
-            'created_at' => Yii::t('group', '创建时间'),
-            'updated_at' => Yii::t('group', '更新时间'),
+            'group_id' => Yii::t('group', 'Group Id'),
+            'user_id' => Yii::t('group', 'User Id'),
+            'payment_id' => Yii::t('group', 'Payment Id'),
+            'fee' => Yii::t('group', 'Fee'),
+            'status' => Yii::t('group', 'Status'),
+            'created_at' => Yii::t('group', 'Created At'),
+            'updated_at' => Yii::t('group', 'Updated At'),
         ];
     }
 
