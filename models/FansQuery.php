@@ -2,12 +2,14 @@
 
 namespace yuncms\group\models;
 
+use yii\db\ActiveQuery;
+
 /**
  * This is the ActiveQuery class for [[Fans]].
  *
  * @see Fans
  */
-class FansQuery extends \yii\db\ActiveQuery
+class FansQuery extends ActiveQuery
 {
     /*public function active()
     {

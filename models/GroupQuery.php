@@ -2,12 +2,14 @@
 
 namespace yuncms\group\models;
 
+use yii\db\ActiveQuery;
+
 /**
  * This is the ActiveQuery class for [[Group]].
  *
  * @see Group
  */
-class GroupQuery extends \yii\db\ActiveQuery
+class GroupQuery extends ActiveQuery
 {
     /*public function active()
     {

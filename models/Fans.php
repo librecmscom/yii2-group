@@ -3,6 +3,7 @@
 namespace yuncms\group\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 use yuncms\user\models\User;
 
 /**
@@ -20,7 +21,7 @@ use yuncms\user\models\User;
  * @property Group $group
  * @property User $user
  */
-class Fans extends \yii\db\ActiveRecord
+class Fans extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -41,7 +42,7 @@ class Fans extends \yii\db\ActiveRecord
             ],
         ];
     }
-    
+
     /**
      * @inheritdoc
      */

@@ -3,6 +3,7 @@
 namespace yuncms\group\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 use yuncms\user\models\User;
 
 /**
@@ -26,7 +27,7 @@ use yuncms\user\models\User;
  * @property User[] $users
  * @property Topic[] $topics
  */
-class Group extends \yii\db\ActiveRecord
+class Group extends ActiveRecord
 {
     /**
      * @inheritdoc

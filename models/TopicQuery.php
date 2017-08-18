@@ -2,12 +2,14 @@
 
 namespace yuncms\group\models;
 
+use yii\db\ActiveQuery;
+
 /**
  * This is the ActiveQuery class for [[Topic]].
  *
  * @see Topic
  */
-class TopicQuery extends \yii\db\ActiveQuery
+class TopicQuery extends ActiveQuery
 {
     /*public function active()
     {
