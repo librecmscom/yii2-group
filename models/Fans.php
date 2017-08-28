@@ -13,7 +13,6 @@ use yuncms\user\models\User;
  * @property int $user_id 用户ID
  * @property string $payment_id 支付ID
  * @property string $fee 手续费
- * @property string $service_charge 服务费
  * @property int $status 状态
  * @property int $created_at 创建时间
  * @property int $updated_at 更新时间
