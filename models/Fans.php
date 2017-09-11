@@ -3,7 +3,9 @@
 namespace yuncms\group\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yuncms\user\models\User;
 
 /**
@@ -22,6 +24,15 @@ use yuncms\user\models\User;
  */
 class Fans extends ActiveRecord
 {
+    // 等待中
+    const STATUS_PENDING = 0;
+
+    const STATUS_ACTIVE = 1;
+
+    const SCENARIO_CREATE = 'create';
+
+    const SCENARIO_UPDATE = 'update';
+
     /**
      * @inheritdoc
      */
@@ -39,7 +50,25 @@ class Fans extends ActiveRecord
             [
                 'class' => 'yii\behaviors\TimestampBehavior',
             ],
+            [
+                'class' => BlameableBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => 'user_id',
+                ],
+            ]
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        return ArrayHelper::merge($scenarios, [
+            'create' => ['group_id'],
+            'update' => ['group_id'],
+        ]);
     }
 
     /**
@@ -48,12 +77,32 @@ class Fans extends ActiveRecord
     public function rules()
     {
         return [
-            [['group_id', 'user_id', 'status'], 'integer'],
+            [['group_id'], 'integer'],
             [['fee'], 'number'],
             [['payment_id'], 'string', 'max' => 50],
-            [['group_id', 'user_id'], 'unique', 'targetAttribute' => ['group_id', 'user_id']],
-            [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::className(), 'targetAttribute' => ['group_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [
+                ['group_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Group::className(),
+                'targetAttribute' => ['group_id' => 'id']
+            ],
+
+            [
+                'group_id',
+                function ($attribute) {
+                    if (Fans::find()->where([
+                        'user_id' => Yii::$app->user->id,
+                        'group_id' => $this->group_id
+                    ])->exists()) {
+                        $this->addError($attribute, Yii::t('app', 'Already exists.'));
+                    }
+                }
+            ],
+
+            // status rules
+            ['status', 'default', 'value' => self::STATUS_PENDING],
+            ['status', 'in', 'range' => [self::STATUS_PENDING, self::STATUS_ACTIVE,]],
         ];
     }
 
@@ -96,5 +145,44 @@ class Fans extends ActiveRecord
     public static function find()
     {
         return new FansQuery(get_called_class());
+    }
+
+    /**
+     * 保存前执行
+     * @param bool $insert 是否是插入操作
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+        if ($insert) {
+            if ($this->group->isAuthor) {
+                $this->status = self::STATUS_ACTIVE;
+            } else {
+                if ($this->group->price == 0) {
+                    $this->status = self::STATUS_ACTIVE;
+                } else {
+                    $this->status = self::STATUS_PENDING;
+                }
+            }
+            //计算服务费
+            $this->fee = bcmul($this->group->price, bcdiv(Yii::$app->params['group.fee'], 100, 2), 2);//计算手续费保留两位小数
+        }
+        return true;
+    }
+
+    /**
+     * 保存后执行
+     * @param bool $insert 是否是插入操作
+     * @param array $changedAttributes 更改的属性
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert) {
+            $this->group->link('fans', $this);
+        }
+        parent::afterSave($insert, $changedAttributes);
     }
 }

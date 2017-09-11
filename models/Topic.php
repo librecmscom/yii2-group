@@ -64,15 +64,15 @@ class Topic extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('group', '主键'),
-            'group_id' => Yii::t('group', '群组ID'),
-            'user_id' => Yii::t('group', '用户ID'),
-            'model_id' => Yii::t('group', '资源模型ID'),
-            'model' => Yii::t('group', '资源模型名称'),
-            'subject' => Yii::t('group', '资源名称'),
-            'status' => Yii::t('group', '状态'),
-            'created_at' => Yii::t('group', '创建时间'),
-            'updated_at' => Yii::t('group', '更新时间'),
+            'id' => Yii::t('group', 'Id'),
+            'group_id' => Yii::t('group', 'Group Id'),
+            'user_id' => Yii::t('group', 'User Id'),
+            'model_id' => Yii::t('group', 'Model Id'),
+            'model' => Yii::t('group', 'Model'),
+            'subject' => Yii::t('group', 'Subject'),
+            'status' => Yii::t('group', 'Status'),
+            'created_at' => Yii::t('group', 'Created At'),
+            'updated_at' => Yii::t('group', 'Updated At'),
         ];
     }
 

@@ -15,6 +15,7 @@ class M170803074108Create_group_fans_table extends Migration
         }
 
         $this->createTable('{{%group_fans}}', [
+            'id' => $this->primaryKey()->comment('主键'),
             'group_id' => $this->integer()->comment('群组ID'),
             'user_id' => $this->integer()->comment('用户ID'),
             'payment_id' => $this->string(50)->comment('支付ID'),
@@ -22,6 +23,7 @@ class M170803074108Create_group_fans_table extends Migration
             'status' => $this->smallInteger(1)->defaultValue(0)->comment('状态'),
             'created_at' => $this->integer()->notNull()->defaultValue(0)->comment('创建时间'),
             'updated_at' => $this->integer()->notNull()->defaultValue(0)->comment('更新时间'),
+            'expired_at' => $this->integer()->notNull()->defaultValue(0)->comment('过期时间'),
         ], $tableOptions);
 
         $this->createIndex('{{%group_fans_un}}', '{{%group_fans}}', ['group_id', 'user_id'], true);
