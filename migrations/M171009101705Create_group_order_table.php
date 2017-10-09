@@ -15,14 +15,15 @@ class M171009101705Create_group_order_table extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
         $this->createTable('{{%group_order}}', [
-            'id' => $this->primaryKey()->comment('主键'),
-            'group_id' => $this->integer()->comment('群组ID'),
-            'user_id' => $this->integer()->comment('用户ID'),
-            'payment_id' => $this->string(50)->comment('支付ID'),
-            'fee' => $this->decimal(10, 2)->defaultValue(0.00)->comment('手续费'),
-            'status' => $this->smallInteger(1)->defaultValue(0)->comment('状态'),
-            'created_at' => $this->integer()->notNull()->defaultValue(0)->comment('创建时间'),
-            'updated_at' => $this->integer()->notNull()->defaultValue(0)->comment('更新时间'),
+            'id' => $this->primaryKey()->comment('ID'),
+            'group_id' => $this->integer()->comment('Group ID'),
+            'user_id' => $this->integer()->comment('User ID'),
+            'payment_id' => $this->string(50)->comment('Payment ID'),
+            'fee' => $this->decimal(10, 2)->defaultValue(0.00)->comment('Fee'),
+            'status' => $this->smallInteger(1)->defaultValue(0)->comment('Status'),
+            'created_at' => $this->integer()->notNull()->defaultValue(0)->comment('Created At'),
+            'updated_at' => $this->integer()->notNull()->defaultValue(0)->comment('Updated At'),
+            'expired_at' => $this->integer()->notNull()->defaultValue(0)->comment('Expired At'),
         ], $tableOptions);
 
         $this->createIndex('{{%group_order_un}}', '{{%group_order}}', ['group_id', 'user_id'], true);

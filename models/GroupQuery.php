@@ -2,19 +2,21 @@
 
 namespace yuncms\group\models;
 
-use Yii;
-use yii\db\ActiveQuery;
-
 /**
  * This is the ActiveQuery class for [[Group]].
  *
  * @see Group
  */
-class GroupQuery extends ActiveQuery
+class GroupQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
         return $this->andWhere('[[status]]=1');
+    }*/
+
+    /*public function active()
+    {
+        return $this->andWhere(['status' => Group::STATUS_PUBLISHED]);
     }*/
 
     /**
@@ -36,45 +38,59 @@ class GroupQuery extends ActiveQuery
     }
 
     /**
-     * 最新圈子
-     * @return $this
+     * 热门模型
+     * @param string $reference 计算字段
+     * @param float $pull 热度衰减下拉指数默认是1.8
+     * @return mixed
      */
-    public function newest()
+    public function hottest($reference = 'views', $pull = 1.8)
     {
-        return $this->orderBy(['(start_time - now())' => SORT_ASC]);
+        return $this->orderBy(['(' . $reference . ' / pow((((UNIX_TIMESTAMP(NOW()) - created_at) / 3600) + 2),' . $pull . ') )' => SORT_DESC]);
     }
 
     /**
-     * 热门圈子
-     * 按报名人数计算，热度衰减指数是1.8
+     * 查询今日新增
+     * @return $this
      */
-    public function hottest()
+    public function dayCreate()
     {
-        return $this->orderBy(['(applicants / pow((((UNIX_TIMESTAMP(NOW()) - created_at) / 3600) + 2),1.8) )' => SORT_DESC]);
+        return $this->andWhere('date(created_at)=date(NOW())');
     }
 
     /**
-     * 我发起的
+     * 查询本周新增
      * @return $this
      */
-    public function my()
+    public function weekCreate()
     {
-        return $this->andWhere(['user_id' => Yii::$app->user->id]);
+        return $this->andWhere('month(FROM_UNIXTIME(created_at)) = month(curdate()) AND week(FROM_UNIXTIME(created_at)) = week(curdate())');
     }
 
     /**
-     * 我参与的
+     * 查询本月新增
      * @return $this
      */
-    public function myJoin()
+    public function monthCreate()
     {
-        return $this->innerJoinWith([
-            'fans' => function ($query) {
-                $query->where([
-                    GroupMember::tableName() . '.user_id' => Yii::$app->user->id,
-                    GroupMember::tableName() . '.status' => GroupMember::STATUS_ACTIVE
-                ]);
-            }
-        ]);
+        return $this->andWhere('month(FROM_UNIXTIME(created_at)) = month(curdate()) AND year(FROM_UNIXTIME(created_at)) = year(curdate())');
     }
+
+    /**
+     * 查询本年新增
+     * @return $this
+     */
+    public function yearCreate()
+    {
+        return $this->andWhere('year(FROM_UNIXTIME(created_at)) = year(curdate())');
+    }
+
+    /**
+     * 查询本季度新增
+     * @return $this
+     */
+    public function quarterCreate()
+    {
+        return $this->andWhere('quarter(FROM_UNIXTIME(created_at)) = quarter(curdate())');
+    }
+
 }

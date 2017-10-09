@@ -15,27 +15,26 @@ class M171009101704Create_group_member_table extends Migration
             $tableOptions = 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('{{%group_members}}', [
-            'id' => $this->primaryKey()->comment('主键'),
-            'group_id' => $this->integer()->comment('群组ID'),
-            'user_id' => $this->integer()->comment('用户ID'),
-            'payment_id' => $this->string(50)->comment('支付ID'),
-            'fee' => $this->decimal(10, 2)->defaultValue(0.00)->comment('手续费'),
-            'status' => $this->smallInteger(1)->defaultValue(0)->comment('状态'),
-            'created_at' => $this->integer()->notNull()->defaultValue(0)->comment('创建时间'),
-            'updated_at' => $this->integer()->notNull()->defaultValue(0)->comment('更新时间'),
-            'expired_at' => $this->integer()->notNull()->defaultValue(0)->comment('过期时间'),
+        $this->createTable('{{%group_member}}', [
+            'id' => $this->primaryKey()->comment('ID'),
+            'group_id' => $this->integer()->comment('Group ID'),
+            'user_id' => $this->integer()->comment('User ID'),
+            'role' => $this->smallInteger(1)->comment('Role'),
+            'status' => $this->smallInteger(1)->defaultValue(0)->comment('Status'),
+            'created_at' => $this->integer()->notNull()->defaultValue(0)->comment('Created At'),
+            'updated_at' => $this->integer()->notNull()->defaultValue(0)->comment('Updated At'),
+            'expired_at' => $this->integer()->notNull()->defaultValue(0)->comment('Expired At'),
         ], $tableOptions);
 
-        $this->createIndex('{{%group_members_un}}', '{{%group_members}}', ['group_id', 'user_id'], true);
-        $this->addForeignKey('{{%group_members_fk}}', '{{%group_members}}', 'group_id', '{{%group}}', 'id', 'CASCADE', 'CASCADE');
-        $this->addForeignKey('{{%group_members_fk1}}', '{{%group_members}}', 'user_id', '{{%user}}', 'id', 'CASCADE', 'CASCADE');
+        $this->createIndex('{{%group_member_un}}', '{{%group_member}}', ['group_id', 'user_id'], true);
+        $this->addForeignKey('{{%group_member_fk}}', '{{%group_member}}', 'group_id', '{{%group}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('{{%group_member_fk1}}', '{{%group_member}}', 'user_id', '{{%user}}', 'id', 'CASCADE', 'CASCADE');
 
     }
 
     public function safeDown()
     {
-        $this->dropTable('{{%group_members}}');
+        $this->dropTable('{{%group_member}}');
     }
 
 

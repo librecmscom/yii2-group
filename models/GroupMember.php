@@ -11,13 +11,12 @@ use yuncms\system\helpers\DateHelper;
 use yuncms\user\models\User;
 
 /**
- * This is the model class for table "{{%group_order}}".
+ * This is the model class for table "{{%group_member}}".
  *
  * @property integer $id
  * @property integer $group_id
  * @property integer $user_id
- * @property string $payment_id
- * @property string $fee
+ * @property integer $role
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
@@ -30,26 +29,19 @@ use yuncms\user\models\User;
  * @property-read boolean $isDraft 是否草稿
  * @property-read boolean $isPublished 是否发布
  */
-class GroupOrder extends ActiveRecord
+class GroupMember extends ActiveRecord
 {
 
     //场景定义
     const SCENARIO_CREATE = 'create';//创建
     const SCENARIO_UPDATE = 'update';//更新
 
-    //状态定义
-    const STATUS_DRAFT = 0;//草稿
-    const STATUS_REVIEW = 1;//审核
-    const STATUS_REJECTED = 2;//拒绝
-    const STATUS_PUBLISHED = 3;//发布
-
-
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%group_order}}';
+        return '{{%group_member}}';
     }
 
     /**
@@ -89,9 +81,7 @@ class GroupOrder extends ActiveRecord
     public function rules()
     {
         return [
-            [['group_id', 'user_id', 'status', 'created_at', 'updated_at', 'expired_at'], 'integer'],
-            [['fee'], 'number'],
-            [['payment_id'], 'string', 'max' => 50],
+            [['group_id', 'user_id', 'role', 'status', 'created_at', 'updated_at', 'expired_at'], 'integer'],
             [['group_id', 'user_id'], 'unique', 'targetAttribute' => ['group_id', 'user_id']],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::className(), 'targetAttribute' => ['group_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
@@ -107,8 +97,7 @@ class GroupOrder extends ActiveRecord
             'id' => Yii::t('group', 'ID'),
             'group_id' => Yii::t('group', 'Group ID'),
             'user_id' => Yii::t('group', 'User ID'),
-            'payment_id' => Yii::t('group', 'Payment ID'),
-            'fee' => Yii::t('group', 'Fee'),
+            'role' => Yii::t('group', 'Role'),
             'status' => Yii::t('group', 'Status'),
             'created_at' => Yii::t('group', 'Created At'),
             'updated_at' => Yii::t('group', 'Updated At'),
@@ -134,11 +123,11 @@ class GroupOrder extends ActiveRecord
 
     /**
      * @inheritdoc
-     * @return GroupOrderQuery the active query used by this AR class.
+     * @return GroupMemberQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new GroupOrderQuery(get_called_class());
+        return new GroupMemberQuery(get_called_class());
     }
 
     /**
@@ -148,20 +137,6 @@ class GroupOrder extends ActiveRecord
     public function getIsAuthor()
     {
         return $this->user_id == Yii::$app->user->id;
-    }
-
-    /**
-     * 获取状态列表
-     * @return array
-     */
-    public static function getStatusList()
-    {
-        return [
-            self::STATUS_DRAFT => Yii::t('group', 'Draft'),
-            self::STATUS_REVIEW => Yii::t('group', 'Review'),
-            self::STATUS_REJECTED => Yii::t('group', 'Rejected'),
-            self::STATUS_PUBLISHED => Yii::t('group', 'Published'),
-        ];
     }
 
 //    public function afterFind()

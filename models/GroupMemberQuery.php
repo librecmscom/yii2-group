@@ -3,11 +3,11 @@
 namespace yuncms\group\models;
 
 /**
- * This is the ActiveQuery class for [[GroupOrder]].
+ * This is the ActiveQuery class for [[GroupMember]].
  *
- * @see GroupOrder
+ * @see GroupMember
  */
-class GroupOrderQuery extends \yii\db\ActiveQuery
+class GroupMemberQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -16,12 +16,12 @@ class GroupOrderQuery extends \yii\db\ActiveQuery
 
     /*public function active()
     {
-        return $this->andWhere(['status' => GroupOrder::STATUS_PUBLISHED]);
+        return $this->andWhere(['status' => GroupMember::STATUS_PUBLISHED]);
     }*/
 
     /**
      * @inheritdoc
-     * @return GroupOrder[]|array
+     * @return GroupMember[]|array
      */
     public function all($db = null)
     {
@@ -30,22 +30,11 @@ class GroupOrderQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return GroupOrder|array|null
+     * @return GroupMember|array|null
      */
     public function one($db = null)
     {
         return parent::one($db);
-    }
-
-    /**
-     * 热门模型
-     * @param string $reference 计算字段
-     * @param float $pull 热度衰减下拉指数默认是1.8
-     * @return mixed
-     */
-    public function hottest($reference = 'views', $pull = 1.8)
-    {
-        return $this->orderBy(['(' . $reference . ' / pow((((UNIX_TIMESTAMP(NOW()) - created_at) / 3600) + 2),' . $pull . ') )' => SORT_DESC]);
     }
 
     /**

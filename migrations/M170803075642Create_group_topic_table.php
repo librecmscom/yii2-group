@@ -15,15 +15,15 @@ class M170803075642Create_group_topic_table extends Migration
         }
 
         $this->createTable('{{%group_topic}}', [
-            'id' => $this->primaryKey()->comment('主键'),
-            'group_id' => $this->integer()->comment('群组ID'),
-            'user_id' => $this->integer()->comment('用户ID'),
-            'model_id' => $this->integer()->notNull()->comment('资源模型ID'),
-            'model' => $this->string()->notNull()->comment('资源模型名称'),
-            'subject' => $this->string()->comment('资源名称'),
-            'status' => $this->smallInteger(1)->defaultValue(0)->comment('状态'),
-            'created_at' => $this->integer()->notNull()->defaultValue(0)->comment('创建时间'),
-            'updated_at' => $this->integer()->notNull()->defaultValue(0)->comment('更新时间'),
+            'id' => $this->primaryKey()->comment('ID'),
+            'group_id' => $this->integer()->comment('Group ID'),
+            'user_id' => $this->integer()->comment('User ID'),
+            'model_id' => $this->integer()->notNull()->comment('Model ID'),
+            'model' => $this->string()->notNull()->comment('Model'),
+            'subject' => $this->string()->comment('Subject'),
+            'status' => $this->smallInteger(1)->defaultValue(0)->comment('Status'),
+            'created_at' => $this->integer()->notNull()->defaultValue(0)->comment('Created At'),
+            'updated_at' => $this->integer()->notNull()->defaultValue(0)->comment('updated At'),
         ], $tableOptions);
         $this->addForeignKey('{{%group_topic_fk}}', '{{%group_topic}}', 'group_id', '{{%group}}', 'id', 'CASCADE', 'CASCADE');
         $this->addForeignKey('{{%group_topic_fk1}}', '{{%group_topic}}', 'user_id', '{{%user}}', 'id', 'CASCADE', 'CASCADE');
