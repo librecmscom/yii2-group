@@ -139,6 +139,31 @@ class GroupMember extends ActiveRecord
         return $this->user_id == Yii::$app->user->id;
     }
 
+    /**
+     * 获取角色名称
+     * @return string
+     */
+    public function getRoleName()
+    {
+        switch ($this->role) {
+            case 0:
+                $roleName = Yii::t('group', 'Owner');
+                break;
+            case 1:
+                $roleName = Yii::t('group', 'Manage');
+                break;
+            case 2:
+                $roleName = Yii::t('group', 'Guest');
+                break;
+            case 3:
+                $roleName = Yii::t('group', 'Member');
+                break;
+            default:
+                $roleName = Yii::t('group', 'Member');
+        }
+        return $roleName;
+    }
+
 //    public function afterFind()
 //    {
 //        parent::afterFind();

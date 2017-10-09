@@ -2,6 +2,8 @@
 
 namespace yuncms\group\models;
 
+use Yii;
+
 /**
  * This is the ActiveQuery class for [[Group]].
  *
@@ -35,6 +37,15 @@ class GroupQuery extends \yii\db\ActiveQuery
     public function one($db = null)
     {
         return parent::one($db);
+    }
+
+    /**
+     * 我发起的
+     * @return $this
+     */
+    public function my()
+    {
+        return $this->andWhere(['user_id' => Yii::$app->user->id]);
     }
 
     /**

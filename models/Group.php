@@ -4,6 +4,7 @@ namespace yuncms\group\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -50,13 +51,6 @@ class Group extends ActiveRecord
     const STATUS_REJECTED = 2;//拒绝
     const STATUS_PUBLISHED = 3;//发布
 
-    //事件定义
-    const BEFORE_PUBLISHED = 'beforePublished';
-    const AFTER_PUBLISHED = 'afterPublished';
-    const BEFORE_REJECTED = 'beforeRejected';
-    const AFTER_REJECTED = 'afterRejected';
-
-
     /**
      * @inheritdoc
      */
@@ -90,8 +84,8 @@ class Group extends ActiveRecord
     {
         $scenarios = parent::scenarios();
         return ArrayHelper::merge($scenarios, [
-            static::SCENARIO_CREATE => [],
-            static::SCENARIO_UPDATE => [],
+            static::SCENARIO_CREATE => ['name'],
+            static::SCENARIO_UPDATE => ['name'],
         ]);
     }
 
@@ -102,12 +96,11 @@ class Group extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'name', 'created_at', 'updated_at'], 'required'],
-            [['user_id', 'allow_publish', 'applicants', 'status', 'blocked_at', 'created_at', 'updated_at'], 'integer'],
+            [['name'], 'required'],
+            [['allow_publish', 'applicants', 'status'], 'integer'],
             [['price'], 'number'],
             [['name'], 'string', 'max' => 50],
             [['logo', 'introduce'], 'string', 'max' => 255],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -234,17 +227,24 @@ class Group extends ActiveRecord
     /**
      * @inheritdoc
      */
-//    public function afterSave($insert, $changedAttributes)
-//    {
-//        parent::afterSave($insert, $changedAttributes);
-//        Yii::$app->queue->push(new ScanTextJob([
-//            'modelId' => $this->getPrimaryKey(),
-//            'modelClass' => get_class($this),
-//            'scenario' => $this->isNewRecord ? 'new' : 'edit',
-//            'category'=>'',
-//        ]));
-//        // ...custom code here...
-//    }
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        if ($insert) {
+            try {
+                //将主播自己加入直播
+                $join = new GroupMember([
+                    'group_id' => $this->id,
+                    'user_id' => $this->user_id,
+                    'role' => 0,
+                ]);
+                $join->link('group', $this);
+                $this->updateCounters(['applicants' => 1]);
+            } catch (Exception $e) {
+
+            }
+        }
+    }
 
     /**
      * @inheritdoc
