@@ -4,8 +4,9 @@ namespace yuncms\group\migrations;
 
 use yii\db\Migration;
 
-class M170803074108Create_group_fans_table extends Migration
+class M171009101704Create_group_member_table extends Migration
 {
+
     public function safeUp()
     {
         $tableOptions = null;
@@ -14,7 +15,7 @@ class M170803074108Create_group_fans_table extends Migration
             $tableOptions = 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('{{%group_fans}}', [
+        $this->createTable('{{%group_members}}', [
             'id' => $this->primaryKey()->comment('主键'),
             'group_id' => $this->integer()->comment('群组ID'),
             'user_id' => $this->integer()->comment('用户ID'),
@@ -26,16 +27,17 @@ class M170803074108Create_group_fans_table extends Migration
             'expired_at' => $this->integer()->notNull()->defaultValue(0)->comment('过期时间'),
         ], $tableOptions);
 
-        $this->createIndex('{{%group_fans_un}}', '{{%group_fans}}', ['group_id', 'user_id'], true);
-        $this->addForeignKey('{{%group_fans_fk}}', '{{%group_fans}}', 'group_id', '{{%group}}', 'id', 'CASCADE', 'CASCADE');
-        $this->addForeignKey('{{%group_fans_fk1}}', '{{%group_fans}}', 'user_id', '{{%user}}', 'id', 'CASCADE', 'CASCADE');
+        $this->createIndex('{{%group_members_un}}', '{{%group_members}}', ['group_id', 'user_id'], true);
+        $this->addForeignKey('{{%group_members_fk}}', '{{%group_members}}', 'group_id', '{{%group}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('{{%group_members_fk1}}', '{{%group_members}}', 'user_id', '{{%user}}', 'id', 'CASCADE', 'CASCADE');
 
     }
 
     public function safeDown()
     {
-        $this->dropTable('{{%group_fans}}');
+        $this->dropTable('{{%group_members}}');
     }
+
 
     /*
     // Use up()/down() to run migration code without a transaction.
@@ -46,7 +48,7 @@ class M170803074108Create_group_fans_table extends Migration
 
     public function down()
     {
-        echo "M170803074108Create_group_fans_table cannot be reverted.\n";
+        echo "M171009101704Create_group_member_table cannot be reverted.\n";
 
         return false;
     }

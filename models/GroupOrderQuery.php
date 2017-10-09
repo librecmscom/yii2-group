@@ -5,11 +5,11 @@ namespace yuncms\group\models;
 use yii\db\ActiveQuery;
 
 /**
- * This is the ActiveQuery class for [[Topic]].
+ * This is the ActiveQuery class for [[Fans]].
  *
- * @see Topic
+ * @see GroupMember
  */
-class TopicQuery extends ActiveQuery
+class GroupOrderQuery extends ActiveQuery
 {
     /*public function active()
     {
@@ -18,7 +18,7 @@ class TopicQuery extends ActiveQuery
 
     /**
      * @inheritdoc
-     * @return Topic[]|array
+     * @return GroupMember[]|array
      */
     public function all($db = null)
     {
@@ -27,7 +27,7 @@ class TopicQuery extends ActiveQuery
 
     /**
      * @inheritdoc
-     * @return Topic|array|null
+     * @return GroupMember|array|null
      */
     public function one($db = null)
     {

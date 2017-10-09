@@ -8,7 +8,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Response;
-use yuncms\group\models\Fans;
+use yuncms\group\models\GroupMember;
 use yuncms\group\models\Group;
 use yii\web\NotFoundHttpException;
 use yuncms\group\frontend\models\GroupSearch;
@@ -142,9 +142,9 @@ class GroupController extends Controller
             Yii::$app->session->setFlash('warning', Yii::t('group', 'Illegal parameters.'));
             return $this->redirect(['/group/group/view', 'uuid' => $model->id]);
         }
-        $join = Fans::findOne($model,Yii::$app->user->id);
+        $join = GroupMember::findOne($model,Yii::$app->user->id);
 
-        if ($join->status == Fans::STATUS_PENDING) {
+        if ($join->status == GroupMember::STATUS_PENDING) {
             $payment = new Payment([
                 'currency' => 'CNY',
                 'money' => $model->price,

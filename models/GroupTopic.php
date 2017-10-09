@@ -22,7 +22,7 @@ use yuncms\user\models\User;
  * @property Group $group
  * @property User $user
  */
-class Topic extends ActiveRecord
+class GroupTopic extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -94,10 +94,10 @@ class Topic extends ActiveRecord
 
     /**
      * @inheritdoc
-     * @return TopicQuery the active query used by this AR class.
+     * @return GroupTopicQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new TopicQuery(get_called_class());
+        return new GroupTopicQuery(get_called_class());
     }
 }

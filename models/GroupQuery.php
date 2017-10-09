@@ -71,8 +71,8 @@ class GroupQuery extends ActiveQuery
         return $this->innerJoinWith([
             'fans' => function ($query) {
                 $query->where([
-                    Fans::tableName() . '.user_id' => Yii::$app->user->id,
-                    Fans::tableName() . '.status' => Fans::STATUS_ACTIVE
+                    GroupMember::tableName() . '.user_id' => Yii::$app->user->id,
+                    GroupMember::tableName() . '.status' => GroupMember::STATUS_ACTIVE
                 ]);
             }
         ]);

@@ -23,9 +23,9 @@ use yuncms\user\models\User;
  * @property int $updated_at 更新时间
  *
  * @property User $user
- * @property Fans[] $fans
+ * @property GroupMember[] $fans
  * @property User[] $users
- * @property Topic[] $topics
+ * @property GroupTopic[] $topics
  */
 class Group extends ActiveRecord
 {
@@ -96,9 +96,9 @@ class Group extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFans()
+    public function getGroupMembers()
     {
-        return $this->hasMany(Fans::className(), ['group_id' => 'id']);
+        return $this->hasMany(GroupMember::className(), ['group_id' => 'id']);
     }
 
     /**
@@ -114,7 +114,7 @@ class Group extends ActiveRecord
      */
     public function getGroupTopics()
     {
-        return $this->hasMany(Topic::className(), ['group_id' => 'id']);
+        return $this->hasMany(GroupTopic::className(), ['group_id' => 'id']);
     }
 
     /**

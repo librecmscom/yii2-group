@@ -22,7 +22,7 @@ use yuncms\user\models\User;
  * @property Group $group
  * @property User $user
  */
-class Fans extends ActiveRecord
+class GroupOrder extends ActiveRecord
 {
     // 等待中
     const STATUS_PENDING = 0;
@@ -38,7 +38,7 @@ class Fans extends ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%group_fans}}';
+        return '{{%group_order}}';
     }
 
     /**
@@ -91,7 +91,7 @@ class Fans extends ActiveRecord
             [
                 'group_id',
                 function ($attribute) {
-                    if (Fans::find()->where([
+                    if (GroupOrder::find()->where([
                         'user_id' => Yii::$app->user->id,
                         'group_id' => $this->group_id
                     ])->exists()) {
@@ -140,11 +140,11 @@ class Fans extends ActiveRecord
 
     /**
      * @inheritdoc
-     * @return FansQuery the active query used by this AR class.
+     * @return GroupOrderQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new FansQuery(get_called_class());
+        return new GroupOrderQuery(get_called_class());
     }
 
     /**
