@@ -19,8 +19,23 @@
     }
   },
   "extra": {
+    "yuncms": {
+      "name": "group",
+      "i18n": {
+        "class": "yii\\i18n\\PhpMessageSource",
+        "sourceLanguage": "en-US",
+        "basePath": "@yuncms/group/messages"
+      },
+      "migrationNamespace": "yuncms\\group\\migrations",
+      "backend": {
+        "class": "yuncms\\group\\backend\\Module"
+      },
+      "frontend": {
+        "class": "yuncms\\group\\frontend\\Module"
+      }
+    },
     "branch-alias": {
-      "dev-master": "1.0-dev"
+      "dev-master": "2.0-dev"
     }
   },
   "repositories": [
