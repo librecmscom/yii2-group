@@ -81,5 +81,4 @@ class GroupMemberQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere('quarter(FROM_UNIXTIME(created_at)) = quarter(curdate())');
     }
-
 }

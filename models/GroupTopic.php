@@ -39,10 +39,10 @@ class GroupTopic extends ActiveRecord implements ScanInterface
     const SCENARIO_UPDATE = 'update';//更新
 
     //状态定义
-    const STATUS_DRAFT = 0;//草稿
-    const STATUS_REVIEW = 1;//审核
-    const STATUS_REJECTED = 2;//拒绝
-    const STATUS_PUBLISHED = 3;//发布
+    const STATUS_DRAFT = 0b0;//草稿
+    const STATUS_REVIEW = 0b1;//待审核
+    const STATUS_REJECTED = 0b10;//拒绝
+    const STATUS_PUBLISHED = 0b11;//发布
 
     //事件定义
     const BEFORE_PUBLISHED = 'beforePublished';
@@ -97,11 +97,14 @@ class GroupTopic extends ActiveRecord implements ScanInterface
     public function rules()
     {
         return [
-            [['group_id', 'user_id', 'model_id', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['group_id', 'user_id', 'model_id'], 'integer'],
             [['model_id', 'model'], 'required'],
             [['model', 'subject'], 'string', 'max' => 255],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::className(), 'targetAttribute' => ['group_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+
+            ['status', 'default', 'value' => self::STATUS_REVIEW],
+            ['status', 'in', 'range' => [self::STATUS_DRAFT, self::STATUS_REVIEW, self::STATUS_REJECTED, self::STATUS_PUBLISHED]],
         ];
     }
 

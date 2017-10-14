@@ -16,7 +16,7 @@ class M170803073613Create_group_table extends Migration
 
         $this->createTable('{{%group}}', [
             'id' => $this->primaryKey()->comment('ID'),
-            'user_id' => $this->integer()->notNull()->comment('User ID'),
+            'user_id' => $this->integer()->unsigned()->notNull()->comment('User ID'),
             'name' => $this->string(50)->notNull()->comment('Name'),
             'logo' => $this->string()->comment('Logo'),
             'price' => $this->decimal(7, 2)->comment('Price'),

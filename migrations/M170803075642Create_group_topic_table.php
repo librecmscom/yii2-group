@@ -17,7 +17,7 @@ class M170803075642Create_group_topic_table extends Migration
         $this->createTable('{{%group_topic}}', [
             'id' => $this->primaryKey()->comment('ID'),
             'group_id' => $this->integer()->comment('Group ID'),
-            'user_id' => $this->integer()->comment('User ID'),
+            'user_id' => $this->integer()->unsigned()->comment('User ID'),
             'model_id' => $this->integer()->notNull()->comment('Model ID'),
             'model' => $this->string()->notNull()->comment('Model'),
             'subject' => $this->string()->comment('Subject'),

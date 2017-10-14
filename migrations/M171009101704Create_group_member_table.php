@@ -18,7 +18,7 @@ class M171009101704Create_group_member_table extends Migration
         $this->createTable('{{%group_member}}', [
             'id' => $this->primaryKey()->comment('ID'),
             'group_id' => $this->integer()->comment('Group ID'),
-            'user_id' => $this->integer()->comment('User ID'),
+            'user_id' => $this->integer()->unsigned()->comment('User ID'),
             'role' => $this->smallInteger(1)->comment('Role'),
             'status' => $this->smallInteger(1)->defaultValue(0)->comment('Status'),
             'created_at' => $this->integer()->notNull()->defaultValue(0)->comment('Created At'),

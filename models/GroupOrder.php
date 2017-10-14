@@ -89,11 +89,12 @@ class GroupOrder extends ActiveRecord
     public function rules()
     {
         return [
-            [['group_id', 'user_id', 'status', 'created_at', 'updated_at', 'expired_at'], 'integer'],
+            [['group_id', 'user_id'], 'required', 'on' => [static::SCENARIO_CREATE, static::SCENARIO_UPDATE]],
+            [['group_id', 'user_id'], 'integer', 'on' => [static::SCENARIO_CREATE, static::SCENARIO_UPDATE]],
+            [['group_id', 'user_id'], 'unique', 'targetAttribute' => ['group_id', 'user_id'], 'on' => [static::SCENARIO_CREATE, static::SCENARIO_UPDATE]],
             [['fee'], 'number'],
             [['payment_id'], 'string', 'max' => 50],
-            [['group_id', 'user_id'], 'unique', 'targetAttribute' => ['group_id', 'user_id']],
-            [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::className(), 'targetAttribute' => ['group_id' => 'id']],
+            [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::className(), 'targetAttribute' => ['group_id' => 'id'],],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -142,15 +143,6 @@ class GroupOrder extends ActiveRecord
     }
 
     /**
-     * 是否是作者
-     * @return bool
-     */
-    public function getIsAuthor()
-    {
-        return $this->user_id == Yii::$app->user->id;
-    }
-
-    /**
      * 获取状态列表
      * @return array
      */
@@ -186,17 +178,19 @@ class GroupOrder extends ActiveRecord
     /**
      * @inheritdoc
      */
-//    public function afterSave($insert, $changedAttributes)
-//    {
-//        parent::afterSave($insert, $changedAttributes);
-//        Yii::$app->queue->push(new ScanTextJob([
-//            'modelId' => $this->getPrimaryKey(),
-//            'modelClass' => get_class($this),
-//            'scenario' => $this->isNewRecord ? 'new' : 'edit',
-//            'category'=>'',
-//        ]));
-//        // ...custom code here...
-//    }
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        if ($insert && $this->group->price == 0) {
+            $member = new GroupMember([
+                'role' => GroupMember::ROLE_MEMBER,
+                'user_id' => $this->user_id,
+            ]);
+            $member->link('group', $this->group);
+
+        }
+        // ...custom code here...
+    }
 
     /**
      * @inheritdoc

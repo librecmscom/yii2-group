@@ -40,12 +40,29 @@ class GroupQuery extends \yii\db\ActiveQuery
     }
 
     /**
-     * 我发起的
+     * 我创建的
      * @return $this
      */
     public function my()
     {
         return $this->andWhere(['user_id' => Yii::$app->user->id]);
+    }
+
+    /**
+     * 我加入的
+     * @return $this
+     */
+    public function myJoin()
+    {
+        return $this->andWhere(['!=', Group::tableName().'.user_id', Yii::$app->user->id])->innerJoinWith([
+            /** \yii\db\ActiveQuery $query */
+            'members' => function ($query) {
+                $query->where([
+                        GroupMember::tableName() . '.user_id' => Yii::$app->user->id
+                    ]
+                );
+            }
+        ]);
     }
 
     /**

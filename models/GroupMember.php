@@ -25,9 +25,7 @@ use yuncms\user\models\User;
  * @property Group $group
  * @property User $user
  *
- * @property-read bool isAuthor 是否是作者
- * @property-read boolean $isDraft 是否草稿
- * @property-read boolean $isPublished 是否发布
+ * @property-read string $roleName 角色名称
  */
 class GroupMember extends ActiveRecord
 {
@@ -35,6 +33,14 @@ class GroupMember extends ActiveRecord
     //场景定义
     const SCENARIO_CREATE = 'create';//创建
     const SCENARIO_UPDATE = 'update';//更新
+
+    const ROLE_OWNER = 0b0;
+    const ROLE_MANAGE = 0b1;
+    const ROLE_GUEST = 0b10;
+    const ROLE_MEMBER = 0b11;
+
+    const STATUS_NORMAL = 0b0;//正常
+    const STATUS_BAN = 0b1;//禁言
 
     /**
      * @inheritdoc
@@ -53,12 +59,6 @@ class GroupMember extends ActiveRecord
             [
                 'class' => TimestampBehavior::className(),
             ],
-            [
-                'class' => BlameableBehavior::className(),
-                'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => 'user_id',
-                ],
-            ]
         ];
     }
 
@@ -69,11 +69,10 @@ class GroupMember extends ActiveRecord
     {
         $scenarios = parent::scenarios();
         return ArrayHelper::merge($scenarios, [
-            static::SCENARIO_CREATE => [],
-            static::SCENARIO_UPDATE => [],
+            static::SCENARIO_CREATE => ['group_id', 'user_id'],
+            static::SCENARIO_UPDATE => ['group_id', 'user_id'],
         ]);
     }
-
 
     /**
      * @inheritdoc
@@ -81,9 +80,18 @@ class GroupMember extends ActiveRecord
     public function rules()
     {
         return [
-            [['group_id', 'user_id', 'role', 'status', 'created_at', 'updated_at', 'expired_at'], 'integer'],
-            [['group_id', 'user_id'], 'unique', 'targetAttribute' => ['group_id', 'user_id']],
-            [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::className(), 'targetAttribute' => ['group_id' => 'id']],
+            [['group_id', 'user_id'], 'required', 'on' => [static::SCENARIO_CREATE, static::SCENARIO_UPDATE]],
+            [['group_id', 'user_id'], 'integer', 'on' => [static::SCENARIO_CREATE, static::SCENARIO_UPDATE]],
+
+            [['group_id', 'user_id'], 'unique', 'targetAttribute' => ['group_id', 'user_id'], 'on' => [static::SCENARIO_CREATE, static::SCENARIO_UPDATE]],
+
+            ['role', 'default', 'value' => self::ROLE_MEMBER, 'on' => [static::SCENARIO_CREATE]],
+            ['role', 'in', 'range' => [self::ROLE_OWNER, self::ROLE_MANAGE, self::ROLE_GUEST, self::ROLE_MEMBER]],
+
+            ['status', 'default', 'value' => self::STATUS_NORMAL, 'on' => [static::SCENARIO_CREATE]],
+            ['status', 'in', 'range' => [self::STATUS_NORMAL, self::STATUS_BAN]],
+
+            [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::className(), 'targetAttribute' => ['group_id' => 'id'],],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -131,31 +139,22 @@ class GroupMember extends ActiveRecord
     }
 
     /**
-     * 是否是作者
-     * @return bool
-     */
-    public function getIsAuthor()
-    {
-        return $this->user_id == Yii::$app->user->id;
-    }
-
-    /**
      * 获取角色名称
      * @return string
      */
     public function getRoleName()
     {
         switch ($this->role) {
-            case 0:
+            case 0b0:
                 $roleName = Yii::t('group', 'Owner');
                 break;
-            case 1:
+            case 0b1:
                 $roleName = Yii::t('group', 'Manage');
                 break;
-            case 2:
+            case 0b10:
                 $roleName = Yii::t('group', 'Guest');
                 break;
-            case 3:
+            case 0b11:
                 $roleName = Yii::t('group', 'Member');
                 break;
             default:
@@ -219,51 +218,4 @@ class GroupMember extends ActiveRecord
 //
 //        // ...custom code here...
 //    }
-
-    /**
-     * 生成一个独一无二的标识
-     */
-    protected function generateSlug()
-    {
-        $result = sprintf("%u", crc32($this->id));
-        $slug = '';
-        while ($result > 0) {
-            $s = $result % 62;
-            if ($s > 35) {
-                $s = chr($s + 61);
-            } elseif ($s > 9 && $s <= 35) {
-                $s = chr($s + 55);
-            }
-            $slug .= $s;
-            $result = floor($result / 62);
-        }
-        //return date('YmdHis') . $slug;
-        return $slug;
-    }
-
-    /**
-     * 获取模型总数
-     * @param null|int $duration 缓存时间
-     * @return int get the model rows
-     */
-    public static function getTotal($duration = null)
-    {
-        $total = static::getDb()->cache(function ($db) {
-            return static::find()->count();
-        }, $duration);
-        return $total;
-    }
-
-    /**
-     * 获取模型今日新增总数
-     * @param null|int $duration 缓存时间
-     * @return int
-     */
-    public static function getTodayTotal($duration = null)
-    {
-        $total = static::getDb()->cache(function ($db) {
-            return static::find()->where(['between', 'created_at', DateHelper::todayFirstSecond(), DateHelper::todayLastSecond()])->count();
-        }, $duration);
-        return $total;
-    }
 }

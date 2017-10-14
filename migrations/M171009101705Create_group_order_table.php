@@ -17,7 +17,7 @@ class M171009101705Create_group_order_table extends Migration
         $this->createTable('{{%group_order}}', [
             'id' => $this->primaryKey()->comment('ID'),
             'group_id' => $this->integer()->comment('Group ID'),
-            'user_id' => $this->integer()->comment('User ID'),
+            'user_id' => $this->integer()->unsigned()->comment('User ID'),
             'payment_id' => $this->string(50)->comment('Payment ID'),
             'fee' => $this->decimal(10, 2)->defaultValue(0.00)->comment('Fee'),
             'status' => $this->smallInteger(1)->defaultValue(0)->comment('Status'),

@@ -8,6 +8,7 @@ use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yuncms\question\models\Question;
 use yuncms\system\helpers\DateHelper;
 use yuncms\user\models\User;
 
@@ -73,7 +74,7 @@ class Group extends ActiveRecord
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => 'user_id',
                 ],
-            ]
+            ],
         ];
     }
 
@@ -144,25 +145,18 @@ class Group extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUsers()
-    {
-        return $this->hasMany(User::className(), ['id' => 'user_id'])->viaTable('{{%group_member}}', ['group_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getOrders()
     {
         return $this->hasMany(GroupOrder::className(), ['group_id' => 'id']);
     }
 
     /**
+     * 定义问题关系
      * @return \yii\db\ActiveQuery
      */
-    public function getUsers0()
+    public function getQuestions()
     {
-        return $this->hasMany(User::className(), ['id' => 'user_id'])->viaTable('{{%group_order}}', ['group_id' => 'id']);
+        return $this->hasMany(Question::className(), ['id' => 'question_id'])->viaTable('{{%group_question}}', ['group_id' => 'id']);
     }
 
     /**
@@ -236,7 +230,7 @@ class Group extends ActiveRecord
                 $join = new GroupMember([
                     'group_id' => $this->id,
                     'user_id' => $this->user_id,
-                    'role' => 0,
+                    'role' => GroupMember::ROLE_OWNER,
                 ]);
                 $join->link('group', $this);
                 $this->updateCounters(['applicants' => 1]);
@@ -287,31 +281,5 @@ class Group extends ActiveRecord
         }
         //return date('YmdHis') . $slug;
         return $slug;
-    }
-
-    /**
-     * 获取模型总数
-     * @param null|int $duration 缓存时间
-     * @return int get the model rows
-     */
-    public static function getTotal($duration = null)
-    {
-        $total = static::getDb()->cache(function ($db) {
-            return static::find()->count();
-        }, $duration);
-        return $total;
-    }
-
-    /**
-     * 获取模型今日新增总数
-     * @param null|int $duration 缓存时间
-     * @return int
-     */
-    public static function getTodayTotal($duration = null)
-    {
-        $total = static::getDb()->cache(function ($db) {
-            return static::find()->where(['between', 'created_at', DateHelper::todayFirstSecond(), DateHelper::todayLastSecond()])->count();
-        }, $duration);
-        return $total;
     }
 }
