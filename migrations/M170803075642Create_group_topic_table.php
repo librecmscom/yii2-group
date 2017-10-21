@@ -15,15 +15,15 @@ class M170803075642Create_group_topic_table extends Migration
         }
 
         $this->createTable('{{%group_topic}}', [
-            'id' => $this->primaryKey()->comment('ID'),
-            'group_id' => $this->integer()->comment('Group ID'),
+            'id' => $this->primaryKey()->unsigned()->comment('ID'),
+            'group_id' => $this->integer()->unsigned()->comment('Group ID'),
             'user_id' => $this->integer()->unsigned()->comment('User ID'),
-            'model_id' => $this->integer()->notNull()->comment('Model ID'),
+            'model_id' => $this->integer()->unsigned()->notNull()->comment('Model ID'),
             'model' => $this->string()->notNull()->comment('Model'),
             'subject' => $this->string()->comment('Subject'),
-            'status' => $this->smallInteger(1)->defaultValue(0)->comment('Status'),
-            'created_at' => $this->integer()->notNull()->defaultValue(0)->comment('Created At'),
-            'updated_at' => $this->integer()->notNull()->defaultValue(0)->comment('updated At'),
+            'status' => $this->smallInteger(1)->unsigned()->defaultValue(0)->comment('Status'),
+            'created_at' => $this->integer()->unsigned()->notNull()->defaultValue(0)->comment('Created At'),
+            'updated_at' => $this->integer()->unsigned()->notNull()->defaultValue(0)->comment('updated At'),
         ], $tableOptions);
         $this->addForeignKey('{{%group_topic_fk}}', '{{%group_topic}}', 'group_id', '{{%group}}', 'id', 'CASCADE', 'CASCADE');
         $this->addForeignKey('{{%group_topic_fk1}}', '{{%group_topic}}', 'user_id', '{{%user}}', 'id', 'CASCADE', 'CASCADE');

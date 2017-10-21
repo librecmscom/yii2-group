@@ -16,14 +16,14 @@ class M171009101704Create_group_member_table extends Migration
         }
 
         $this->createTable('{{%group_member}}', [
-            'id' => $this->primaryKey()->comment('ID'),
-            'group_id' => $this->integer()->comment('Group ID'),
+            'id' => $this->primaryKey()->unsigned()->comment('ID'),
+            'group_id' => $this->integer()->unsigned()->comment('Group ID'),
             'user_id' => $this->integer()->unsigned()->comment('User ID'),
-            'role' => $this->smallInteger(1)->comment('Role'),
-            'status' => $this->smallInteger(1)->defaultValue(0)->comment('Status'),
-            'created_at' => $this->integer()->notNull()->defaultValue(0)->comment('Created At'),
-            'updated_at' => $this->integer()->notNull()->defaultValue(0)->comment('Updated At'),
-            'expired_at' => $this->integer()->notNull()->defaultValue(0)->comment('Expired At'),
+            'role' => $this->smallInteger(1)->unsigned()->comment('Role'),
+            'status' => $this->smallInteger(1)->unsigned()->defaultValue(0)->comment('Status'),
+            'created_at' => $this->integer()->unsigned()->notNull()->defaultValue(0)->comment('Created At'),
+            'updated_at' => $this->integer()->unsigned()->notNull()->defaultValue(0)->comment('Updated At'),
+            'expired_at' => $this->integer()->unsigned()->notNull()->defaultValue(0)->comment('Expired At'),
         ], $tableOptions);
 
         $this->createIndex('{{%group_member_un}}', '{{%group_member}}', ['group_id', 'user_id'], true);
