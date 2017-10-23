@@ -1,6 +1,6 @@
 <?php
 
-namespace yuncms\group\frontend\models;
+namespace yuncms\group\backend\models;
 
 use Yii;
 use yii\base\Model;
@@ -8,7 +8,7 @@ use yii\data\ActiveDataProvider;
 use yuncms\group\models\Group;
 
 /**
- * GroupSearch represents the model behind the search form of `yuncms\group\models\Group`.
+ * GroupSearch represents the model behind the search form about `yuncms\group\models\Group`.
  */
 class GroupSearch extends Group
 {
@@ -18,8 +18,8 @@ class GroupSearch extends Group
     public function rules()
     {
         return [
-            [['id', 'user_id', 'allow_publish', 'applicants', 'status', 'blocked_at', 'created_at', 'updated_at'], 'integer'],
-            [['name'], 'safe'],
+            [['id', 'user_id', 'billing_cycle', 'days_free', 'allow_publish', 'applicants', 'status', 'blocked_at', 'created_at', 'updated_at'], 'integer'],
+            [['name', 'logo', 'introduce'], 'safe'],
             [['price'], 'number'],
         ];
     }
@@ -63,6 +63,8 @@ class GroupSearch extends Group
             'id' => $this->id,
             'user_id' => $this->user_id,
             'price' => $this->price,
+            'billing_cycle' => $this->billing_cycle,
+            'days_free' => $this->days_free,
             'allow_publish' => $this->allow_publish,
             'applicants' => $this->applicants,
             'status' => $this->status,
@@ -71,7 +73,9 @@ class GroupSearch extends Group
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'logo', $this->logo])
+            ->andFilterWhere(['like', 'introduce', $this->introduce]);
 
         return $dataProvider;
     }
