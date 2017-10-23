@@ -48,6 +48,12 @@ class GroupSearch extends Group
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                    'created_at' => SORT_ASC,
+                ]
+            ],
         ]);
 
         $this->load($params);
