@@ -19,7 +19,7 @@ class GroupSearch extends Group
     {
         return [
             [['id', 'user_id', 'billing_cycle', 'days_free', 'allow_publish', 'applicants', 'status', 'blocked_at', 'created_at', 'updated_at'], 'integer'],
-            [['name', 'logo', 'introduce'], 'safe'],
+            [['name'], 'safe'],
             [['price'], 'number'],
         ];
     }
@@ -73,9 +73,7 @@ class GroupSearch extends Group
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'logo', $this->logo])
-            ->andFilterWhere(['like', 'introduce', $this->introduce]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }
