@@ -3,7 +3,10 @@
 namespace yuncms\group\models;
 
 use Yii;
+use yii\caching\ChainedDependency;
+use yii\caching\DbDependency;
 use yii\db\ActiveRecord;
+use yii\db\Connection;
 use yii\helpers\ArrayHelper;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -64,18 +67,17 @@ class GroupTopic extends ActiveRecord implements ScanInterface
      */
     public function behaviors()
     {
-        return parent::behaviors();
-//        return [
-//            [
-//                'class' => TimestampBehavior::className(),
-//            ],
-//            [
-//                'class' => BlameableBehavior::className(),
-//                'attributes' => [
-//                    ActiveRecord::EVENT_BEFORE_INSERT => 'user_id',
-//                ],
-//            ]
-//        ];
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => 'user_id',
+                ],
+            ]
+        ];
     }
 
     /**
@@ -85,7 +87,7 @@ class GroupTopic extends ActiveRecord implements ScanInterface
     {
         $scenarios = parent::scenarios();
         return ArrayHelper::merge($scenarios, [
-            static::SCENARIO_CREATE => [],
+            static::SCENARIO_CREATE => ['group_id'],
             static::SCENARIO_UPDATE => [],
         ]);
     }
@@ -333,9 +335,11 @@ class GroupTopic extends ActiveRecord implements ScanInterface
      */
     public static function getTotal($duration = null)
     {
-        $total = static::getDb()->cache(function ($db) {
+        $total = static::getDb()->cache(function (Connection $db) {
             return static::find()->count();
-        }, $duration);
+        }, $duration, new ChainedDependency([
+            'dependencies' => new DbDependency(['db' => self::getDb(), 'sql' => 'SELECT MAX(id) FROM ' . self::tableName()])
+        ]));
         return $total;
     }
 
@@ -346,9 +350,11 @@ class GroupTopic extends ActiveRecord implements ScanInterface
      */
     public static function getTodayTotal($duration = null)
     {
-        $total = static::getDb()->cache(function ($db) {
+        $total = static::getDb()->cache(function (Connection $db) {
             return static::find()->where(['between', 'created_at', DateHelper::todayFirstSecond(), DateHelper::todayLastSecond()])->count();
-        }, $duration);
+        }, $duration, new ChainedDependency([
+            'dependencies' => new DbDependency(['db' => self::getDb(), 'sql' => 'SELECT MAX(created_at) FROM ' . self::tableName()])
+        ]));
         return $total;
     }
 }

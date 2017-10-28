@@ -3,7 +3,10 @@
 namespace yuncms\group\models;
 
 use Yii;
+use yii\caching\ChainedDependency;
+use yii\caching\DbDependency;
 use yii\db\ActiveRecord;
+use yii\db\Connection;
 use yii\helpers\ArrayHelper;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -182,12 +185,11 @@ class GroupOrder extends ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
         if ($insert && $this->group->price == 0) {
-            $member = new GroupMember([
+            $member = new GroupMember([//如果价格是0,直接加入
                 'role' => GroupMember::ROLE_MEMBER,
                 'user_id' => $this->user_id,
             ]);
             $member->link('group', $this->group);
-
         }
         // ...custom code here...
     }
@@ -242,9 +244,11 @@ class GroupOrder extends ActiveRecord
      */
     public static function getTotal($duration = null)
     {
-        $total = static::getDb()->cache(function ($db) {
+        $total = static::getDb()->cache(function (Connection $db) {
             return static::find()->count();
-        }, $duration);
+        }, $duration, new ChainedDependency([
+            'dependencies' => new DbDependency(['db' => self::getDb(), 'sql' => 'SELECT MAX(id) FROM ' . self::tableName()])
+        ]));
         return $total;
     }
 
@@ -255,9 +259,11 @@ class GroupOrder extends ActiveRecord
      */
     public static function getTodayTotal($duration = null)
     {
-        $total = static::getDb()->cache(function ($db) {
+        $total = static::getDb()->cache(function (Connection $db) {
             return static::find()->where(['between', 'created_at', DateHelper::todayFirstSecond(), DateHelper::todayLastSecond()])->count();
-        }, $duration);
+        }, $duration, new ChainedDependency([
+            'dependencies' => new DbDependency(['db' => self::getDb(), 'sql' => 'SELECT MAX(created_at) FROM ' . self::tableName()])
+        ]));
         return $total;
     }
 }

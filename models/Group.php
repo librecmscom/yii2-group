@@ -21,6 +21,8 @@ use yuncms\user\models\User;
  * @property string $logo
  * @property string $price
  * @property string $introduce
+ * @property integer $days_free
+ * @property integer $billing_cycle
  * @property integer $allow_publish
  * @property integer $applicants
  * @property integer $status
@@ -45,12 +47,6 @@ class Group extends ActiveRecord
     //场景定义
     const SCENARIO_CREATE = 'create';//创建
     const SCENARIO_UPDATE = 'update';//更新
-
-    //状态定义
-    const STATUS_DRAFT = 0;//草稿
-    const STATUS_REVIEW = 1;//审核
-    const STATUS_REJECTED = 2;//拒绝
-    const STATUS_PUBLISHED = 3;//发布
 
     /**
      * @inheritdoc
@@ -185,20 +181,6 @@ class Group extends ActiveRecord
         return $this->user_id == Yii::$app->user->id;
     }
 
-    /**
-     * 获取状态列表
-     * @return array
-     */
-    public static function getStatusList()
-    {
-        return [
-            self::STATUS_DRAFT => Yii::t('group', 'Draft'),
-            self::STATUS_REVIEW => Yii::t('group', 'Review'),
-            self::STATUS_REJECTED => Yii::t('group', 'Rejected'),
-            self::STATUS_PUBLISHED => Yii::t('group', 'Published'),
-        ];
-    }
-
 //    public function afterFind()
 //    {
 //        parent::afterFind();
@@ -261,25 +243,4 @@ class Group extends ActiveRecord
 //
 //        // ...custom code here...
 //    }
-
-    /**
-     * 生成一个独一无二的标识
-     */
-    protected function generateSlug()
-    {
-        $result = sprintf("%u", crc32($this->id));
-        $slug = '';
-        while ($result > 0) {
-            $s = $result % 62;
-            if ($s > 35) {
-                $s = chr($s + 61);
-            } elseif ($s > 9 && $s <= 35) {
-                $s = chr($s + 55);
-            }
-            $slug .= $s;
-            $result = floor($result / 62);
-        }
-        //return date('YmdHis') . $slug;
-        return $slug;
-    }
 }
